@@ -50,7 +50,7 @@ int main() {
 	input_file.close();
 
 	ofstream ds_output_file;
-	ds_output_file.open("dataSegment.txt");
+	ds_output_file.open("data.txt");
 	ds_output_file << "#Translation of Data Segment\n";
 	vector<string>ds_translation = ds.data_segment_conversion();
 	for (int i = 0; i < ds_translation.size(); i++)
@@ -58,8 +58,8 @@ int main() {
 	ds_output_file.close();
 	
 	ofstream cs_output_file;
-	cs_output_file.open("codeSegment.txt");
-	cs_output_file << "\n#Translation of Code Segment\n";
+	cs_output_file.open("code.txt");
+	cs_output_file << "#Translation of Code Segment\n";
 	vector<string>code_segment_translation = cs.code_segment_conversion();
 	for (int i = 0; i < code_segment_translation.size(); i++)
 		cs_output_file << code_segment_translation[i] << '\n';

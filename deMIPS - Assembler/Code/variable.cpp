@@ -40,29 +40,31 @@ string to_binary_string(int decimal) {
 
 string to_binary_string(string hex) {
 	string bin;
-	for (int i = hex.size() - 1; i >= 0; i--) {
+	// (i >= 2), cause 0x...
+	for (int i = hex.size() - 1; i >= 2; i--) {
+		string tmp;
 		switch (toupper(hex[i])) {
-		case '0': bin+= "0000";
-		case '1': bin+= "0001";
-		case '2': bin+= "0010";
-		case '3': bin+= "0011";
-		case '4': bin+= "0100";
-		case '5': bin+= "0101";
-		case '6': bin+= "0110";
-		case '7': bin+= "0111";
-		case '8': bin+= "1000";
-		case '9': bin+= "1001";
-		case 'A': bin+= "1010";
-		case 'B': bin+= "1011";
-		case 'C': bin+= "1100";
-		case 'D': bin+= "1101";
-		case 'E': bin+= "1110";
-		case 'F': bin+= "1111";
+		case '0': tmp = "0000"; break;
+		case '1': tmp = "0001";	break;
+		case '2': tmp = "0010";	break;
+		case '3': tmp = "0011";	break;
+		case '4': tmp = "0100";	break;
+		case '5': tmp = "0101";	break;
+		case '6': tmp = "0110";	break;
+		case '7': tmp = "0111";	break;
+		case '8': tmp = "1000";	break;
+		case '9': tmp = "1001";	break;
+		case 'A': case 'a': tmp = "1010"; break;
+		case 'B': case 'b': tmp = "1011"; break;
+		case 'C': case 'c': tmp = "1100"; break;
+		case 'D': case 'd': tmp = "1101"; break;
+		case 'E': case 'e': tmp = "1110"; break;
+		case 'F': case 'f': tmp = "1111";
 		}
+		bin = tmp + bin;
 	}
 	while (bin.size() < 32)
-		bin += '0';
-	reverse(bin.begin(), bin.end());
+		bin = '0' + bin;
 	return bin;
 }
 
@@ -72,7 +74,10 @@ variable::variable(string line) {
 	arguments = split(line, " ,():");
 	label = arguments[0];
 	type = arguments[1];
-	third_argument = stoi(arguments[2]);
+	if (arguments[2].size() > 2 && arguments[2][1] == 'x' && arguments[2][0] == '0')
+		third_argument = stoul(arguments[2], NULL, 16);
+	else
+		third_argument = stoul(arguments[2]);
 }
 
 string variable::variable_conversion() {

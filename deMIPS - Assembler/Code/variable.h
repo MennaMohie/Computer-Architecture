@@ -22,7 +22,7 @@ class variable
 public:
 	string type;
 	string label;
-	int third_argument;
+	unsigned int third_argument;
 	int address;
 
 	variable();

@@ -160,15 +160,16 @@ string instruction::I_type_conversion() {
 		}
 	}
 	if (name == "addi") {
-		conversion += to_binary_string(register_address[arguments[2]]).substr(32 - 5);
-		conversion += to_binary_string(register_address[arguments[1]]).substr(32 - 5);
+		// addi rt, rs, imm
+		conversion += to_binary_string(register_address[arguments[2]]).substr(32 - 5); //rs
+		conversion += to_binary_string(register_address[arguments[1]]).substr(32 - 5); //rt
 
 		if (arguments[3].size() >= 3 && arguments[3][0] == '0' && arguments[3][1] == 'x') {
 			string hexImmediate = arguments[3];
 			conversion += to_binary_string(hexImmediate).substr(32 - 16);
 		}
 		else {
-			int decimalImmediate = stoi(arguments[3]);
+			unsigned int decimalImmediate = stoul(arguments[3]);
 			conversion += to_binary_string(decimalImmediate).substr(32 - 16);
 		}
 	}
