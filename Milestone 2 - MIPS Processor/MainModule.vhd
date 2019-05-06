@@ -59,7 +59,6 @@ architecture Behavioral of MainModule is
 	signal ALUIn2: STD_LOGIC_VECTOR(31 downto 0);
 	signal ALU_SELECT: STD_LOGIC_VECTOR(3 downto 0);
 	signal shft_signOut: STD_LOGIC_VECTOR(31 downto 0);
-	signal shft_instruction: STD_LOGIC_VECTOR(27 downto 0);
 	signal BranchOrNotMux: STD_LOGIC_VECTOR(31 downto 0);
 	signal writeData: STD_LOGIC_VECTOR(31 downto 0);
 	signal jumpAddress: STD_LOGIC_VECTOR(31 downto 0);
@@ -111,8 +110,7 @@ branchh:			ADDER PORT MAP(AdderResult1, shft_signOut, '0', AdderCout2, AdderResu
 jumpMuxx:		MUX GENERIC MAP(numOfSelectors=> 1, numOfBits=> 32)
 					PORT MAP (I=> (AdderResult2&AdderResult1), S(0)=> branchMuxSelector, O=> BranchOrNotMux);
 					
-					shft_instruction(27 downto 0) <= shft_instruction(25 downto 0)&"00";
-					jumpAddress <= (AdderResult1(31 downto 28)&shft_instruction);
+					jumpAddress <= (AdderResult1(31 downto 28)&Instruction(25 downto 0)&"00");
 jumpOrbranch:	MUX GENERIC MAP(numOfSelectors=> 1, numOfBits=> 32)
 					PORT MAP (I=> jumpAddress&BranchOrNotMux, S(0)=> Jump, O=> PCIn);
 

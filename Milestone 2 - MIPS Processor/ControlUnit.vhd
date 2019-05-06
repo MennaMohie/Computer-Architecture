@@ -44,52 +44,38 @@ entity ControlUnit is
 end ControlUnit;
 
 architecture Behavioral of ControlUnit is
-signal and0_output, and1_output, and2_output, and3_output, and4_output, and5_output, 
+signal R_format, lw_format, sw_format, Beq, Bneq, Jmp,
 			or0_output, or1_output: STD_LOGIC;
 begin
-	and_0: AND_GENERIC GENERIC MAP(numOfBits=> 6)
-							PORT MAP(I=> NOT(Instruction31_25(5))&NOT(Instruction31_25(4))&NOT(Instruction31_25(3))&
-							NOT(Instruction31_25(2))&NOT(Instruction31_25(1))&NOT(Instruction31_25(0)),
-							O=> and0_output);
-	and_1: AND_GENERIC GENERIC MAP(numOfBits=> 6)
-							PORT MAP(I=> Instruction31_25(5)&NOT(Instruction31_25(4))&NOT(Instruction31_25(3))&
-							NOT(Instruction31_25(2))&Instruction31_25(1)&Instruction31_25(0),
-							O=> and1_output);
-	and_2: AND_GENERIC GENERIC MAP(numOfBits=> 6)
-							PORT MAP(I=> Instruction31_25(5)&NOT(Instruction31_25(4))&Instruction31_25(3)&
-							NOT(Instruction31_25(2))&Instruction31_25(1)&Instruction31_25(0),
-							O=> and2_output);
-	and_3: AND_GENERIC GENERIC MAP(numOfBits=> 6)
-							PORT MAP(I=> NOT(Instruction31_25(5))&NOT(Instruction31_25(4))&NOT(Instruction31_25(3))&
-							Instruction31_25(2)&NOT(Instruction31_25(1))&NOT(Instruction31_25(0)),
-							O=> and3_output);
+	R_format		<= NOT(Instruction31_25(5)) and NOT(Instruction31_25(4)) and NOT(Instruction31_25(3)) and 
+							NOT(Instruction31_25(2)) and NOT(Instruction31_25(1)) and NOT(Instruction31_25(0));
+							
+	lw_format	<= Instruction31_25(5) and NOT(Instruction31_25(4)) and NOT(Instruction31_25(3)) and 
+							NOT(Instruction31_25(2)) and Instruction31_25(1) and Instruction31_25(0);
+							
+	sw_format	<= Instruction31_25(5) and NOT(Instruction31_25(4)) and Instruction31_25(3) and 
+							NOT(Instruction31_25(2)) and Instruction31_25(1) and Instruction31_25(0);
+							
+	Beq			<= NOT(Instruction31_25(5)) and NOT(Instruction31_25(4)) and NOT(Instruction31_25(3)) and 
+							Instruction31_25(2) and NOT(Instruction31_25(1)) and NOT(Instruction31_25(0));
 	
-	and_4: AND_GENERIC GENERIC MAP(numOfBits=> 6)
-							PORT MAP(I=> NOT(Instruction31_25(5))&NOT(Instruction31_25(4))&NOT(Instruction31_25(3))&
-							Instruction31_25(2)&NOT(Instruction31_25(1))&(Instruction31_25(0)),
-							O=> and4_output);
+	Bneq			<= NOT(Instruction31_25(5)) and NOT(Instruction31_25(4)) and NOT(Instruction31_25(3)) and 
+							Instruction31_25(2) and NOT(Instruction31_25(1)) and (Instruction31_25(0));
 	
-	and_5: AND_GENERIC GENERIC MAP(numOfBits=> 6)
-							PORT MAP(I=> NOT(Instruction31_25(5))&NOT(Instruction31_25(4))&NOT(Instruction31_25(3))&
-							NOT(Instruction31_25(2))&Instruction31_25(1)&NOT(Instruction31_25(0)),
-							O=> and5_output);
+	Jmp			<= NOT(Instruction31_25(5)) and NOT(Instruction31_25(4)) and NOT(Instruction31_25(3)) and 
+							NOT(Instruction31_25(2)) and Instruction31_25(1) and NOT(Instruction31_25(0));
 	
 	
-	or_0: OR_GENERIC GENERIC MAP(numOfBits=> 2)
-						  PORT MAP(I=> (and1_output&and2_output), O=> or0_output);
-	or_1: OR_GENERIC GENERIC MAP(numOfBits=> 2)
-						  PORT MAP(I=> (and0_output&and1_output), O=> or1_output);
-	
-	RegDst<= and0_output;
-	ALUSrc<= or0_output;
-	MemtoReg<= and1_output;
-	RegWrite<= or1_output;
-	MemRead<= and1_output;
-	MemWrite<= and2_output;
-	BranchEQ<= and3_output;
-	BranchNQ<= and4_output;
-	Jump<= and5_output; 
-	ALUOp(1)<= and0_output;
-	ALUOp(0)<= and3_output;
+	RegDst<= R_format;
+	ALUSrc<= lw_format or sw_format;
+	MemtoReg<= lw_format;
+	RegWrite<= lw_format or R_format;
+	MemRead<= lw_format;
+	MemWrite<= sw_format;
+	BranchEQ<= Beq;
+	BranchNQ<= Bneq;
+	Jump<= jmp; 
+	ALUOp(1)<= R_format;
+	ALUOp(0)<= Beq;
 end Behavioral;
 
